@@ -1,0 +1,50 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.currencyconverter.MainActivity" >
+
+    <EditText
+        android:id="@+id/txtValorASerConvertido"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/cmpMoedas"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/cmpMoedas"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:inputType="text"
+        android:text="@string/val" />
+
+    <Spinner
+        android:id="@+id/cmpMoedas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtValorASerConvertido"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="22dp" />
+
+    <Button
+        android:id="@+id/btnConverter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cmpMoedas"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="22dp"
+        android:text="Converter" 
+        android:onClick="converter"/>
+    	
+
+    <TextView
+        android:id="@+id/txtValorConvertido"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnConverter"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="104dp" />
+
+</RelativeLayout>
