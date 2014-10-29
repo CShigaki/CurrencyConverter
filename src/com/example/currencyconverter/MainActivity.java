@@ -115,87 +115,52 @@ public class MainActivity extends ActionBarActivity {
 	}
 
 	private void converter() {
-		HttpURLConnection connection;
-		OutputStreamWriter request;
+		Connector conn = new Connector("http://rate-exchange.herokuapp.com/fetchRate?from="+selectedCurrency+"&to=BRL");
 		TextView text = (TextView) this.findViewById(R.id.txtValorConvertido);
 		EditText valor = (EditText) this
 				.findViewById(R.id.txtValorASerConvertido);
 		if (selectedCurrency.equals("")) {
-			AlertDialog.Builder alertDialog = null;
-			alertDialog = new AlertDialog.Builder(MainActivity.this);
-			alertDialog.setTitle("Error");
-			alertDialog.setMessage("Blank value field!");
-			alertDialog.setCancelable(true);
-			alertDialog.setPositiveButton("Ok",
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-						}
-					});
-			alertDialog.create();
-			alertDialog.show();
+			sendMessage("Blank value field!", "Error");
 		} else {
-			HttpClient Client = new DefaultHttpClient();
-			String url = "http://rate-exchange.herokuapp.com/fetchRate?from="+selectedCurrency+"&to=BRL";
-			try {
-				String response = "";
+			if (conn.Connect()){
+				try {
+					JSONObject jsonHandler = new JSONObject(conn.getResponse());
+					DecimalFormat df = new DecimalFormat("#.##");
 
-				HttpGet httpget = new HttpGet(url);
-				ResponseHandler<String> responseHandler = new BasicResponseHandler();
-				response = Client.execute(httpget, responseHandler);
+					float rate = Float.valueOf((String) jsonHandler.get("Rate"));
+					float valorFinal = Float.valueOf((String) valor.getText()
+							.toString()) * rate;
+					text.setText("R$" + df.format(valorFinal));
 
-				JSONObject jsonHandler = new JSONObject(response);
-				DecimalFormat df = new DecimalFormat("#.##");
-
-				float rate = Float.valueOf((String) jsonHandler.get("Rate"));
-				float valorFinal = Float.valueOf((String) valor.getText()
-						.toString()) * rate;
-				text.setText("R$" + df.format(valorFinal));
-
-			} catch (IOException ex) {
-				AlertDialog.Builder alertDialog = null;
-				alertDialog = new AlertDialog.Builder(MainActivity.this);
-				alertDialog.setTitle("Error");
-				alertDialog.setMessage("Network error!");
-				alertDialog.setCancelable(true);
-				alertDialog.setPositiveButton("Ok",
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int which) { // dismiss the dialog
-							}
-						});
-				alertDialog.create();
-				alertDialog.show();
-			} catch (JSONException ex) {
-				AlertDialog.Builder alertDialog = null;
-				alertDialog = new AlertDialog.Builder(MainActivity.this);
-				alertDialog.setTitle("Error");
-				alertDialog.setMessage("Network error!");
-				alertDialog.setCancelable(true);
-				alertDialog.setPositiveButton("Ok",
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int which) { // dismiss the dialog
-							}
-						});
-				alertDialog.create();
-				alertDialog.show();
-			} catch (NumberFormatException e) {
-				AlertDialog.Builder alertDialog = null;
-				alertDialog = new AlertDialog.Builder(MainActivity.this);
-				alertDialog.setTitle("Error");
-				alertDialog.setMessage("Type only numbers in the value field!");
-				alertDialog.setCancelable(true);
-				alertDialog.setPositiveButton("Ok",
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int which) { // dismiss the dialog
-							}
-						});
-				alertDialog.create();
-				alertDialog.show();
-				valor.setText("");
+				} catch (NumberFormatException e) {
+					sendMessage("Type only numbers in the value field!", "Error!");
+					valor.setText("");
+				} catch (JSONException e) {
+					sendMessage("Network error!", "Error!");
+				}
+			
 			}
+			else{
+				sendMessage("Network error!", "Error!");
+			}
+			
 
 		}
+	}
+	
+	private void sendMessage(String message, String title){
+		AlertDialog.Builder alertDialog = null;
+		alertDialog = new AlertDialog.Builder(MainActivity.this);
+		alertDialog.setTitle(title);
+		alertDialog.setMessage(message);
+		alertDialog.setCancelable(true);
+		alertDialog.setPositiveButton("Ok",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog,
+							int which) { // dismiss the dialog
+					}
+				});
+		alertDialog.create();
+		alertDialog.show();
 	}
 }
